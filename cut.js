@@ -4,6 +4,8 @@ const mp3Duration = require('mp3-duration');
 const listDirectory = require('./listDirectory');
 const mm = require('music-metadata');
 
+const config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
+
 const difficulties = ['hard', 'normal', 'easy']
 
 // Create difficulty category path directories
@@ -77,22 +79,20 @@ async function mainCut() {
                         const finalTime = songDurationObject.finalTime
 
 
-
+                        console.log(`Cutting songs for ${title} by ${artist}.`)
                         difficulties.forEach(difficulty => {
-                            let durationOfDifficulty = 1
+                            let durationOfDifficulty = config.hard
                             if (difficulty === 'normal') {
-                                durationOfDifficulty = 2.5
+                                durationOfDifficulty = config.normal
                             } else if (difficulty === 'easy') {
-                                durationOfDifficulty = 5
+                                durationOfDifficulty = config.easy
                             }
-                            console.log(`cutting songs into ${difficulty} difficulty:`)
                             for (let index = startTime; index < finalTime; index += durationOfDifficulty) {
-                                const targetPath = `${albumPath}/${difficulty}/${title}-${index}-${index + durationOfDifficulty}`
+                                const targetPath = `${albumPath}/${difficulty}/${title}-${index.toFixed(2)}-${index + durationOfDifficulty.toFixed(2)}`
                                 cutFileMp3(filepath, targetPath, index, index + durationOfDifficulty).then(() => {
                                 })
                                 
                             }
-                            console.log('done.')
 
                         });
                     })
